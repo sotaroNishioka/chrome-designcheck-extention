@@ -11,6 +11,7 @@ const savedRuleSetsSelect = document.querySelector('#savedRuleSets') as HTMLSele
 export function initializePopup() {
   loadCurrentState();
   setEventListeners();
+  loadSavedRuleSets();
 }
 
 // 初期状態を読み込む関数
@@ -33,8 +34,13 @@ function applyCurrentRulesToInputs() {
   inputs.forEach(input => {
     const id = input.id;
     const value = currentRules[id];
+
+    // currentRulesに値がある場合は反映し、ない場合はリセット
     if (value !== undefined) {
+      // 配列の場合はカンマ区切りで表示
       input.value = Array.isArray(value) ? value.join(', ') : value;
+    } else {
+      input.value = ''; // 値がない場合はリセット
     }
   });
 }
@@ -49,8 +55,10 @@ function setEventListeners() {
     input.addEventListener('input', handleInputChange);
   });
 
+  // savedRuleSetsの値が変更された場合に、選択されたルールセットを読み込む
+  savedRuleSetsSelect.addEventListener('change', loadSelectedRuleSet);
+
   document.querySelector('#saveRules')?.addEventListener('click', saveCurrentRules);
-  document.querySelector('#loadRules')?.addEventListener('click', loadSelectedRuleSet);
   document.querySelector('#deleteRules')?.addEventListener('click', deleteSelectedRuleSet);
   document.querySelector('#exportRules')?.addEventListener('click', exportRules);
   document.querySelector('#importRules')?.addEventListener('click', importRules);
