@@ -4,25 +4,21 @@ import { deleteRuleSet, getRuleSets, saveRuleSet } from "../utils/storage";
 let currentRules: Record<string, string | string[]> = {};
 
 // DOM要素をキャッシュする変数
-const enableCheckingInput = document.querySelector('#enableChecking') as HTMLInputElement;
 const rulesContainer = document.querySelector('.rules-container') as HTMLDivElement;
 const savedRuleSetsSelect = document.querySelector('#savedRuleSets') as HTMLSelectElement;
 
 export function initializePopup() {
   loadCurrentState();
-  setEventListeners();
   loadSavedRuleSets();
+  setEventListeners();
 }
 
 // 初期状態を読み込む関数
 async function loadCurrentState() {
-  const { currentRules: savedRules = {}, isEnabled = false } = await chrome.storage.sync.get([
+  const { currentRules: savedRules = {} } = await chrome.storage.sync.get([
     'currentRules',
-    'isEnabled'
   ]);
-  console.log('Loading current state:', savedRules, isEnabled);
   currentRules = savedRules;
-  enableCheckingInput.checked = isEnabled;
 
   // input要素に現在のルールを反映
   applyCurrentRulesToInputs();
@@ -47,8 +43,6 @@ function applyCurrentRulesToInputs() {
 
 // イベントリスナーの設定を行う関数
 function setEventListeners() {
-  enableCheckingInput.addEventListener('change', updateRules);
-
   // input要素に変更イベントを設定し、currentRulesを更新する
   const inputs = rulesContainer.querySelectorAll('input');
   inputs.forEach(input => {
@@ -81,8 +75,7 @@ function handleInputChange(event: Event) {
 async function updateRules() {
   console.log('Updating rules:', currentRules);
   await chrome.storage.sync.set({
-    currentRules,
-    isEnabled: enableCheckingInput.checked
+    currentRules
   });
 
   sendRulesToActiveTab(currentRules);
@@ -90,12 +83,12 @@ async function updateRules() {
 
 // アクティブなタブにルールを送信する関数
 async function sendRulesToActiveTab(newRules: Record<string, string | string[]>) {
+  console.log('Sending rules to active tab:', newRules);
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   if (tab.id) {
     chrome.tabs.sendMessage(tab.id, {
-      type: 'UPDATE_RULES',
-      rules: newRules,
-      enabled: enableCheckingInput.checked
+      type: 'CHECK_DESIGN',
+      rules: newRules
     });
   }
 }

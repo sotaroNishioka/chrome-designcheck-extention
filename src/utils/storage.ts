@@ -8,6 +8,7 @@ export const saveRuleSet = async (name: string, rules: DesignRule): Promise<void
 
 export const getRuleSets = async (): Promise<SavedRuleSet[]> => {
   const { ruleSets = [] } = await chrome.storage.sync.get('ruleSets');
+  console.log('ruleSets:', ruleSets);
   return ruleSets;
 };
 

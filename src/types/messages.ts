@@ -1,7 +1,7 @@
 import type { DesignRule } from './rules';
 
 export interface Message {
-  type: 'UPDATE_RULES';
+  type: 'CHECK_DESIGN';
   rules: DesignRule;
   enabled: boolean;
 }

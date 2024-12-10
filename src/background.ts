@@ -6,11 +6,11 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
     chrome.storage.sync.get(['currentRules', 'isEnabled'], (data) => {
       if (data.currentRules && data.isEnabled) {
         const message: Message = {
-          type: 'UPDATE_RULES',
+          type: 'CHECK_DESIGN',
           rules: data.currentRules,
           enabled: data.isEnabled
         };
-        
+
         chrome.tabs.sendMessage(tabId, message);
       }
     });
