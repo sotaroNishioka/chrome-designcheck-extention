@@ -9,18 +9,6 @@
 <body>
   <div class="container">
     <h1>Design Checker</h1>
-    <div class="toggle-container">
-      <div id="reloadMessage" class="reload-message" style="display: none;">
-        <p>Please reload the page to apply the rules.</p>
-      </div>
-      <label>
-        Enable Checking
-        <input type="checkbox" id="enableChecking">
-      </label>
-    </div>
-    <div class="rules-container">
-      <!-- Rule inputs will be dynamically added here -->
-    </div>
     <div class="saved-rules">
       <h2>Saved Rule Sets</h2>
       <select id="savedRuleSets"></select>
@@ -31,6 +19,13 @@
       <button id="saveRules">Save Current Rules</button>
       <button id="exportRules">Export Rules</button>
       <button id="importRules">Import Rules</button>
+    </div>
+    <div class="toggle-container">
+      <button id="enableCheckingButton" class="toggle-btn off">OFF</button>
+      <input type="checkbox" id="enableChecking" class="">
+    </div>
+    <div class="rules-container">
+      <!-- Rule inputs will be dynamically added here -->
     </div>
   </div>
   <script type="module" src="src/popup.ts"></script>

@@ -18,12 +18,16 @@ export class StyleValidator {
     const computedStyle = window.getComputedStyle(element);
     const padding = parseInt(computedStyle.padding);
 
-    if (this.rules.paddingMultiple && !this.checkMultiple(padding, this.rules.paddingMultiple)) {
+    if (this.rules.paddingMultiple && this.rules.padding === undefined && !this.checkMultiple(padding, this.rules.paddingMultiple)) {
       violations.push(`パディング ${padding}px は ${this.rules.paddingMultiple} の倍数ではありません`);
     }
 
-    if (this.rules.padding && !this.rules.padding.includes(padding.toString())) {
+    if (this.rules.paddingMultiple === undefined && this.rules.padding && !this.rules.padding.includes(padding.toString())) {
       violations.push(`パディング ${padding}px は許可された値 (${this.rules.padding.join(', ')}) ではありません`);
+    }
+
+    if (this.rules.paddingMultiple && this.rules.padding && !this.rules.padding.includes(padding.toString())) {
+      violations.push(`パディング ${padding}px は ${this.rules.paddingMultiple} の倍数でも許可された値でもありません`);
     }
 
     return violations;
@@ -35,12 +39,16 @@ export class StyleValidator {
     const computedStyle = window.getComputedStyle(element);
     const margin = parseInt(computedStyle.margin);
 
-    if (this.rules.marginMultiple && !this.checkMultiple(margin, this.rules.marginMultiple)) {
+    if (this.rules.marginMultiple && this.rules.margin === undefined && !this.checkMultiple(margin, this.rules.marginMultiple)) {
       violations.push(`マージン ${margin}px は ${this.rules.marginMultiple} の倍数ではありません`);
     }
 
-    if (this.rules.margin && !this.rules.margin.includes(margin.toString())) {
+    if (this.rules.marginMultiple === undefined && this.rules.margin && !this.rules.margin.includes(margin.toString())) {
       violations.push(`マージン ${margin}px は許可された値 (${this.rules.margin.join(', ')}) ではありません`);
+    }
+
+    if (this.rules.marginMultiple && this.rules.margin && !this.rules.margin.includes(margin.toString())) {
+      violations.push(`マージン ${margin}px は ${this.rules.marginMultiple} の倍数でも許可された値でもありません`);
     }
 
     return violations;
@@ -65,12 +73,16 @@ export class StyleValidator {
     const computedStyle = window.getComputedStyle(element);
     const fontSize = parseInt(computedStyle.fontSize);
 
-    if (this.rules.fontSizeMultiple && !this.checkMultiple(fontSize, this.rules.fontSizeMultiple)) {
+    if (this.rules.fontSizeMultiple && this.rules.fontSize === undefined && !this.checkMultiple(fontSize, this.rules.fontSizeMultiple)) {
       violations.push(`フォントサイズ ${fontSize}px は ${this.rules.fontSizeMultiple} の倍数ではありません`);
     }
 
-    if (this.rules.fontSize && !this.rules.fontSize.includes(fontSize.toString())) {
+    if (this.rules.fontSizeMultiple === undefined && this.rules.fontSize && !this.rules.fontSize.includes(fontSize.toString())) {
       violations.push(`フォントサイズ ${fontSize}px は許可された値 (${this.rules.fontSize.join(', ')}) ではありません`);
+    }
+
+    if (this.rules.fontSizeMultiple && this.rules.fontSize && !this.rules.fontSize.includes(fontSize.toString())) {
+      violations.push(`フォントサイズ ${fontSize}px は ${this.rules.fontSizeMultiple} の倍数でも許可された値でもありません`);
     }
 
     return violations;
@@ -121,12 +133,16 @@ export class StyleValidator {
     const computedStyle = window.getComputedStyle(element);
     const borderWidth = parseInt(computedStyle.borderWidth);
 
-    if (this.rules.borderWidthMultiple && !this.checkMultiple(borderWidth, this.rules.borderWidthMultiple)) {
+    if (this.rules.borderWidthMultiple && this.rules.borderWidth === undefined && !this.checkMultiple(borderWidth, this.rules.borderWidthMultiple)) {
       violations.push(`ボーダー幅 ${borderWidth}px は ${this.rules.borderWidthMultiple} の倍数ではありません`);
     }
 
-    if (this.rules.borderWidth && !this.rules.borderWidth.includes(borderWidth.toString())) {
+    if (this.rules.borderWidthMultiple === undefined && this.rules.borderWidth && !this.rules.borderWidth.includes(borderWidth.toString())) {
       violations.push(`ボーダー幅 ${borderWidth}px は許可された値 (${this.rules.borderWidth.join(', ')}) ではありません`);
+    }
+
+    if (this.rules.borderWidthMultiple && this.rules.borderWidth && !this.rules.borderWidth.includes(borderWidth.toString())) {
+      violations.push(`ボーダー幅 ${borderWidth}px は ${this.rules.borderWidthMultiple} の倍数でも許可された値でもありません`);
     }
 
     return violations;

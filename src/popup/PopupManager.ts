@@ -26,7 +26,7 @@ export class PopupManager {
     this.savedRuleSetsSelect = document.querySelector('#savedRuleSets') as HTMLSelectElement;
 
     this.initializeEventListeners();
-    this.loadCurrentState();
+    this.loadCurrentState();  // 初期状態を読み込む
     this.createRuleInputs();
     this.loadSavedRuleSets();
   }
@@ -49,6 +49,22 @@ export class PopupManager {
 
     this.currentRules = currentRules;
     this.enableCheckingInput.checked = isEnabled;
+
+    // RuleInputに最新のルールを反映
+    this.ruleInputs.forEach((ruleInput, index) => {
+      const config = PopupManager.RULE_CONFIGS[index];
+
+      // currentRules[config.id]がundefinedの場合に備えてチェック
+      const value = this.currentRules[config.id];
+      // @ts-ignore
+      const multipleValue = this.currentRules[config.multipleId];
+
+      // valueがundefinedでない場合にsetValueを呼び出す
+      if (value !== undefined) {
+        // @ts-ignore
+        ruleInput.setValue(value, multipleValue);
+      }
+    });
   }
 
   private createRuleInputs(): void {
@@ -59,6 +75,9 @@ export class PopupManager {
         () => this.updateRules()
       );
       this.ruleInputs.push(ruleInput);
+
+      // 入力値変更時にchrome.storage.syncに保存
+      ruleInput.getElement().addEventListener('input', () => this.saveRulesToChromeStorage());
 
       // ラベル要素を作成
       const label = document.createElement('label');
@@ -74,7 +93,6 @@ export class PopupManager {
       this.rulesContainer.appendChild(ruleWrapper);
     });
   }
-
 
   private async loadSavedRuleSets(): Promise<void> {
     const ruleSets = await getRuleSets();
@@ -167,5 +185,28 @@ export class PopupManager {
         alert('Invalid JSON format!');
       }
     }
+  }
+
+  // chrome.storage.syncに値を保存するメソッド
+  private saveRulesToChromeStorage(): void {
+    const newRules: DesignRule = {};
+
+    this.ruleInputs.forEach((ruleInput, index) => {
+      const config = PopupManager.RULE_CONFIGS[index];
+      const { value, multiple } = ruleInput.getValue();
+
+      if (value) {
+        // @ts-ignore
+        newRules[config.id] = value;
+      }
+
+      if (multiple && config.multipleId) {
+        // @ts-ignore
+        newRules[config.multipleId] = multiple;
+      }
+    });
+
+    // chrome.storage.syncに保存
+    chrome.storage.sync.set({ currentRules: newRules });
   }
 }
