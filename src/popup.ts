@@ -1,7 +1,7 @@
-import { PopupManager } from './popup/PopupManager';
+import { initializePopup } from './popup/PopupManager';
 
 document.addEventListener('DOMContentLoaded', () => {
-  new PopupManager();
+  initializePopup();
 });
 
 
@@ -14,10 +14,12 @@ document.getElementById("enableCheckingButton")?.addEventListener("click", funct
     button.classList.add("on");
     button.textContent = "ON";  // ボタンのテキストをONに変更
     checkBox.checked = true;
+    console.log("ON");
   } else {
     button.classList.remove("on");
     button.classList.add("off");
     button.textContent = "OFF";  // ボタンのテキストをOFFに変更
     checkBox.checked = false;
+    console.log("OFF");
   }
 });

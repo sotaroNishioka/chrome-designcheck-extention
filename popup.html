@@ -9,25 +9,67 @@
 <body>
   <div class="container">
     <h1>Design Checker</h1>
+
+    <!-- 保存したルールセット -->
     <div class="saved-rules">
       <h2>Saved Rule Sets</h2>
       <select id="savedRuleSets"></select>
       <button id="loadRules">Load</button>
       <button id="deleteRules">Delete</button>
     </div>
+
+    <!-- アクションボタン -->
     <div class="actions">
       <button id="saveRules">Save Current Rules</button>
       <button id="exportRules">Export Rules</button>
       <button id="importRules">Import Rules</button>
     </div>
+
+    <!-- チェック機能の切り替え -->
     <div class="toggle-container">
       <button id="enableCheckingButton" class="toggle-btn off">OFF</button>
       <input type="checkbox" id="enableChecking" class="">
     </div>
+
+    <!-- ルールの入力フォーム -->
     <div class="rules-container">
-      <!-- Rule inputs will be dynamically added here -->
+      <!-- RULE_CONFIGS に基づいて input を直接記載 -->
+
+      <div class="rule-wrapper">
+        <label for="padding">Padding (px)</label>
+        <input id="padding" class="rule-input" type="text" placeholder="Padding (comma-separated)">
+      </div>
+      <div class="rule-wrapper">
+        <label for="margin">Margin (px)</label>
+        <input id="margin" class="rule-input" type="text" placeholder="Margin (comma-separated)">
+      </div>
+      <div class="rule-wrapper">
+        <label for="fonts">Fonts</label>
+        <input id="fonts" class="rule-input" type="text" placeholder="Fonts (e.g., Arial, Helvetica)">
+      </div>
+      <div class="rule-wrapper">
+        <label for="fontSize">Font Size (px)</label>
+        <input id="fontSize" class="rule-input" type="text" placeholder="Font Size (comma-separated)">
+      </div>
+      <div class="rule-wrapper">
+        <label for="fontColor">Font Color</label>
+        <input id="fontColor" class="rule-input" type="text" placeholder="Font Color (e.g., #000000)">
+      </div>
+      <div class="rule-wrapper">
+        <label for="backgroundColor">Background Color</label>
+        <input id="backgroundColor" class="rule-input" type="text" placeholder="Background Color (e.g., #FFFFFF)">
+      </div>
+      <div class="rule-wrapper">
+        <label for="borderColor">Border Color</label>
+        <input id="borderColor" class="rule-input" type="text" placeholder="Border Color (e.g., #CCCCCC)">
+      </div>
+      <div class="rule-wrapper">
+        <label for="borderWidth">Border Width (px)</label>
+        <input id="borderWidth" class="rule-input" type="text" placeholder="Border Width (comma-separated)">
+      </div>
     </div>
   </div>
+
   <script type="module" src="src/popup.ts"></script>
 </body>
 
