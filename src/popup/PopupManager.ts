@@ -19,6 +19,7 @@ async function loadCurrentState() {
     'currentRules',
     'isEnabled'
   ]);
+  console.log('Loading current state:', savedRules, isEnabled);
   currentRules = savedRules;
   enableCheckingInput.checked = isEnabled;
 
@@ -42,6 +43,12 @@ function applyCurrentRulesToInputs() {
 function setEventListeners() {
   enableCheckingInput.addEventListener('change', updateRules);
 
+  // input要素に変更イベントを設定し、currentRulesを更新する
+  const inputs = rulesContainer.querySelectorAll('input');
+  inputs.forEach(input => {
+    input.addEventListener('input', handleInputChange);
+  });
+
   document.querySelector('#saveRules')?.addEventListener('click', saveCurrentRules);
   document.querySelector('#loadRules')?.addEventListener('click', loadSelectedRuleSet);
   document.querySelector('#deleteRules')?.addEventListener('click', deleteSelectedRuleSet);
@@ -49,25 +56,28 @@ function setEventListeners() {
   document.querySelector('#importRules')?.addEventListener('click', importRules);
 }
 
+// 入力値が変更された時にcurrentRulesを更新する関数
+function handleInputChange(event: Event) {
+  const input = event.target as HTMLInputElement;
+  const id = input.id;
+  const value = input.value.split(',').map(val => val.trim());
+
+  // currentRulesを更新
+  currentRules[id] = value.length === 1 ? value[0] : value;
+
+  // rulesの更新を反映
+  updateRules();
+}
+
 // ルールを更新する関数
 async function updateRules() {
-  const newRules: Record<string, string | string[]> = {};
-
-  const inputs = rulesContainer.querySelectorAll('input');
-  inputs.forEach(input => {
-    const id = input.id;
-    const value = input.value.split(',').map(val => val.trim());
-    newRules[id] = value.length === 1 ? value[0] : value;
-  });
-
-  currentRules = newRules;
-
+  console.log('Updating rules:', currentRules);
   await chrome.storage.sync.set({
-    currentRules: newRules,
+    currentRules,
     isEnabled: enableCheckingInput.checked
   });
 
-  sendRulesToActiveTab(newRules);
+  sendRulesToActiveTab(currentRules);
 }
 
 // アクティブなタブにルールを送信する関数
