@@ -56,6 +56,7 @@ function setEventListeners() {
   document.querySelector('#deleteRules')?.addEventListener('click', deleteSelectedRuleSet);
   document.querySelector('#exportRules')?.addEventListener('click', exportRules);
   document.querySelector('#importRules')?.addEventListener('click', importRules);
+  document.querySelector('#startCheck')?.addEventListener('click', sendRulesToActiveTab);
 }
 
 // 入力値が変更された時にcurrentRulesを更新する関数
@@ -65,7 +66,7 @@ function handleInputChange(event: Event) {
   const value = input.value.split(',').map(val => val.trim());
 
   // currentRulesを更新
-  currentRules[id] = value.length === 1 ? value[0] : value;
+  currentRules[id] = value;
 
   // rulesの更新を反映
   updateRules();
@@ -77,18 +78,19 @@ async function updateRules() {
   await chrome.storage.sync.set({
     currentRules
   });
-
-  sendRulesToActiveTab(currentRules);
 }
 
 // アクティブなタブにルールを送信する関数
-async function sendRulesToActiveTab(newRules: Record<string, string | string[]>) {
-  console.log('Sending rules to active tab:', newRules);
+async function sendRulesToActiveTab() {
+  console.log('Sending rules to active tab:', currentRules);
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  console.log('Active tab:', tab);
   if (tab.id) {
     chrome.tabs.sendMessage(tab.id, {
       type: 'CHECK_DESIGN',
-      rules: newRules
+      rules: currentRules
+    }, () => {
+      console.log('Message sent!');
     });
   }
 }

@@ -1,8 +1,7 @@
-import { StyleValidator } from './utils/validator';
+import { validate } from './utils/validator';
 import type { Message } from './types/messages';
 
-let currentValidator: StyleValidator | null = null;
-let isCheckingEnabled = false;
+console.log('Content script loaded!');
 
 const createAlertIcon = (violations: string[]): HTMLElement => {
   const icon = document.createElement('div');
@@ -17,30 +16,33 @@ const createAlertIcon = (violations: string[]): HTMLElement => {
   return icon;
 };
 
-const checkElement = (element: HTMLElement) => {
-  if (!currentValidator || !isCheckingEnabled) return;
-
-  const result = currentValidator.validate(element);
-  if (result.violations.length > 0) {
-    const alertIcon = createAlertIcon(result.violations);
-    element.style.position = 'relative';
-    element.appendChild(alertIcon);
-  }
-};
-
+// メッセージリスナーの修正
 chrome.runtime.onMessage.addListener((message: Message) => {
+  console.log('Message received:', message);
+  // メッセージが 'CHECK_DESIGN' タイプであることを確認
   if (message.type === 'CHECK_DESIGN') {
-    currentValidator = new StyleValidator(message.rules);
-    isCheckingEnabled = message.enabled;
-
-    if (isCheckingEnabled) {
+    // ルールが存在するかどうかを確認
+    if (message.rules) {
+      // すべてのHTML要素をループしてデザインチェックを実行
       document.querySelectorAll('*').forEach((element) => {
         if (element instanceof HTMLElement) {
-          checkElement(element);
+          // バリデーションの実行
+          const result = validate(element, message.rules);
+
+          console.log('Validation result:', result.violations.length);
+          // バリデーション違反がある場合
+          if (result.violations.length > 0) {
+            const alertIcon = createAlertIcon(result.violations);
+
+            // 警告アイコンを要素に追加
+            element.style.position = 'relative';
+            element.appendChild(alertIcon);
+          }
         }
       });
     } else {
-      document.querySelectorAll('.design-checker-alert').forEach(el => el.remove());
+      console.error('Rules are missing in the message:', message);
     }
   }
+  return true;
 });

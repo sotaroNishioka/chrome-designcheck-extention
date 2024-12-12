@@ -7,10 +7,10 @@ export interface DesignRule {
   backgroundColor?: string[];
   borderColor?: string[];
   borderWidth?: string[];
-  paddingMultiple?: number;
-  marginMultiple?: number;
-  fontSizeMultiple?: number;
-  borderWidthMultiple?: number;
+  paddingMultiple?: string[];
+  marginMultiple?: string[];
+  fontSizeMultiple?: string[];
+  borderWidthMultiple?: string[];
 }
 
 export interface RuleInputConfig {
