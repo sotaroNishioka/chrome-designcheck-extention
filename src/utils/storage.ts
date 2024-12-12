@@ -1,4 +1,4 @@
-import { DesignRule, SavedRuleSet } from '../types/rules';
+import type { DesignRule, SavedRuleSet } from '../types/rules';
 
 export const saveRuleSet = async (name: string, rules: DesignRule): Promise<void> => {
   const { ruleSets = [] } = await chrome.storage.sync.get('ruleSets');

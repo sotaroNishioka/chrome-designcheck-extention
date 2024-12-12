@@ -1,9 +1,9 @@
-import { DesignRule, ValidationResult } from '../types/rules';
+import type { DesignRule, ValidationResult } from '../types/rules';
 
 // 値が倍数ルールに従っているかチェック
 function checkMultiple(value: number, multiple: string[]): boolean {
   // 一つでも余りが0以外のものがあればfalseを返す
-  return multiple.every(m => value % parseInt(m) === 0);
+  return multiple.every(m => value % Number.parseInt(m) === 0);
 }
 
 // パディングのバリデーション
@@ -13,12 +13,12 @@ function validatePadding(element: HTMLElement, rules: DesignRule): string[] {
   }
   const violations: string[] = [];
   const computedStyle = window.getComputedStyle(element);
-  const padding = parseInt(computedStyle.padding);
+  const padding = Number.parseInt(computedStyle.padding);
   console.log('Padding:', padding);
-  const paddingTop = parseInt(computedStyle.paddingTop);
-  const paddingRight = parseInt(computedStyle.paddingRight);
-  const paddingBottom = parseInt(computedStyle.paddingBottom);
-  const paddingLeft = parseInt(computedStyle.paddingLeft);
+  const paddingTop = Number.parseInt(computedStyle.paddingTop);
+  const paddingRight = Number.parseInt(computedStyle.paddingRight);
+  const paddingBottom = Number.parseInt(computedStyle.paddingBottom);
+  const paddingLeft = Number.parseInt(computedStyle.paddingLeft);
   console.log('PaddingTop:', paddingTop);
   console.log('PaddingRight:', paddingRight);
   console.log('PaddingBottom:', paddingBottom);
@@ -47,7 +47,7 @@ function validateMargin(element: HTMLElement, rules: DesignRule): string[] {
   }
   const violations: string[] = [];
   const computedStyle = window.getComputedStyle(element);
-  const margin = parseInt(computedStyle.margin);
+  const margin = Number.parseInt(computedStyle.margin);
 
   if (rules.marginMultiple && rules.margin === undefined && !checkMultiple(margin, rules.marginMultiple)) {
     violations.push(`マージン ${margin}px は ${rules.marginMultiple} の倍数ではありません`);
@@ -93,7 +93,7 @@ function validateFontSize(element: HTMLElement, rules: DesignRule): string[] {
   }
   const violations: string[] = [];
   const computedStyle = window.getComputedStyle(element);
-  const fontSize = parseInt(computedStyle.fontSize);
+  const fontSize = Number.parseInt(computedStyle.fontSize);
 
   if (rules.fontSizeMultiple && rules.fontSize === undefined && !checkMultiple(fontSize, rules.fontSizeMultiple)) {
     violations.push(`フォントサイズ ${fontSize}px は ${rules.fontSizeMultiple} の倍数ではありません`);
@@ -177,7 +177,7 @@ function validateBorderWidth(element: HTMLElement, rules: DesignRule): string[] 
   }
   const violations: string[] = [];
   const computedStyle = window.getComputedStyle(element);
-  const borderWidth = parseInt(computedStyle.borderWidth);
+  const borderWidth = Number.parseInt(computedStyle.borderWidth);
 
   if (rules.borderWidthMultiple && rules.borderWidth === undefined && !checkMultiple(borderWidth, rules.borderWidthMultiple)) {
     violations.push(`ボーダー幅 ${borderWidth}px は ${rules.borderWidthMultiple} の倍数ではありません`);
@@ -200,17 +200,17 @@ function rgbToHex(rgb: string): string {
   const matches = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
   if (!matches) return rgb;
 
-  const r = parseInt(matches[1]);
-  const g = parseInt(matches[2]);
-  const b = parseInt(matches[3]);
+  const r = Number.parseInt(matches[1]);
+  const g = Number.parseInt(matches[2]);
+  const b = Number.parseInt(matches[3]);
 
   // 16進数に変換
   const toHex = (n: number): string => {
     const hex = n.toString(16);
-    return hex.length === 1 ? '0' + hex : hex;
+    return hex.length === 1 ? `0${hex}` : hex;
   };
 
-  return '#' + toHex(r) + toHex(g) + toHex(b);
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
 // すべてのバリデーションを実行

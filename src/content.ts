@@ -24,7 +24,7 @@ chrome.runtime.onMessage.addListener((message: Message) => {
     // ルールが存在するかどうかを確認
     if (message.rules) {
       // すべてのHTML要素をループしてデザインチェックを実行
-      document.querySelectorAll('*').forEach((element) => {
+      for (const element of document.querySelectorAll('*')) {
         if (element instanceof HTMLElement) {
           // バリデーションの実行
           const result = validate(element, message.rules);
@@ -39,7 +39,7 @@ chrome.runtime.onMessage.addListener((message: Message) => {
             element.appendChild(alertIcon);
           }
         }
-      });
+      }
     } else {
       console.error('Rules are missing in the message:', message);
     }

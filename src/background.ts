@@ -1,4 +1,4 @@
-import { Message } from './types/messages';
+import type { Message } from './types/messages';
 
 // Listen for tab updates to re-apply rules when pages load
 chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
