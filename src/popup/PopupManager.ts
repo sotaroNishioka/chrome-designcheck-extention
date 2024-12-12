@@ -31,7 +31,7 @@ async function loadCurrentState() {
 // 現在のルールを入力要素に反映させる関数
 function applyCurrentRulesToInputs() {
 	const inputs = rulesContainer.querySelectorAll("input");
-	inputs.forEach((input) => {
+	for (const input of inputs) {
 		const id = input.id;
 		const value = currentRules[id];
 
@@ -42,16 +42,16 @@ function applyCurrentRulesToInputs() {
 		} else {
 			input.value = ""; // 値がない場合はリセット
 		}
-	});
+	}
 }
 
 // イベントリスナーの設定を行う関数
 function setEventListeners() {
 	// input要素に変更イベントを設定し、currentRulesを更新する
 	const inputs = rulesContainer.querySelectorAll("input");
-	inputs.forEach((input) => {
+	for (const input of inputs) {
 		input.addEventListener("input", handleInputChange);
-	});
+	}
 
 	// savedRuleSetsの値が変更された場合に、選択されたルールセットを読み込む
 	savedRuleSetsSelect.addEventListener("change", loadSelectedRuleSet);
@@ -126,12 +126,12 @@ async function saveCurrentRules() {
 async function loadSavedRuleSets() {
 	const ruleSets = await getRuleSets();
 	savedRuleSetsSelect.innerHTML = "";
-	ruleSets.forEach(({ name }) => {
+	for (const { name } of ruleSets) {
 		const option = document.createElement("option");
 		option.value = name;
 		option.textContent = name;
 		savedRuleSetsSelect.appendChild(option);
-	});
+	}
 }
 
 // ルールセットを読み込む関数
