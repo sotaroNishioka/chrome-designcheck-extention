@@ -35,11 +35,9 @@ function validatePadding(element: HTMLElement, rules: DesignRule): string[] {
 		right: Number.parseInt(computedStyle.paddingRight),
 		bottom: Number.parseInt(computedStyle.paddingBottom),
 		left: Number.parseInt(computedStyle.paddingLeft),
-		all: Number.parseInt(computedStyle.padding), // 一括指定の値も保持
 	};
 
 	if (
-		padding.all === 0 &&
 		padding.top === 0 &&
 		padding.right === 0 &&
 		padding.bottom === 0 &&
@@ -49,9 +47,6 @@ function validatePadding(element: HTMLElement, rules: DesignRule): string[] {
 	}
 
 	if (rules.padding === undefined && rules.paddingMultiple !== undefined) {
-		if (!isValidNumber(padding.all, rules.paddingMultiple, true)) {
-			violations.push(`padding: ${padding.all}px は許可された値ではありません`);
-		}
 		if (!isValidNumber(padding.top, rules.paddingMultiple, true)) {
 			violations.push(
 				`padding-top: ${padding.top}px は許可された値ではありません`,
@@ -75,9 +70,6 @@ function validatePadding(element: HTMLElement, rules: DesignRule): string[] {
 	}
 
 	if (rules.padding !== undefined && rules.paddingMultiple === undefined) {
-		if (!isValidNumber(padding.all, rules.padding, false)) {
-			violations.push(`padding: ${padding.all}px は許可された値ではありません`);
-		}
 		if (!isValidNumber(padding.top, rules.padding, false)) {
 			violations.push(
 				`padding-top: ${padding.top}px は許可された値ではありません`,
@@ -101,12 +93,6 @@ function validatePadding(element: HTMLElement, rules: DesignRule): string[] {
 	}
 
 	if (rules.padding !== undefined && rules.paddingMultiple !== undefined) {
-		if (
-			!isValidNumber(padding.all, rules.padding, false) &&
-			!isValidNumber(padding.all, rules.paddingMultiple, true)
-		) {
-			violations.push(`padding: ${padding.all}px は許可された値ではありません`);
-		}
 		if (
 			!isValidNumber(padding.top, rules.padding, false) &&
 			!isValidNumber(padding.top, rules.paddingMultiple, true)
@@ -158,11 +144,9 @@ function validateMargin(element: HTMLElement, rules: DesignRule): string[] {
 		right: Number.parseInt(computedStyle.marginRight),
 		bottom: Number.parseInt(computedStyle.marginBottom),
 		left: Number.parseInt(computedStyle.marginLeft),
-		all: Number.parseInt(computedStyle.margin), // 一括指定の値も保持
 	};
 
 	if (
-		margin.all === 0 &&
 		margin.top === 0 &&
 		margin.right === 0 &&
 		margin.bottom === 0 &&
@@ -172,9 +156,6 @@ function validateMargin(element: HTMLElement, rules: DesignRule): string[] {
 	}
 
 	if (rules.margin === undefined && rules.marginMultiple !== undefined) {
-		if (!isValidNumber(margin.all, rules.marginMultiple, true)) {
-			violations.push(`margin: ${margin.all}px は許可された値ではありません`);
-		}
 		if (!isValidNumber(margin.top, rules.marginMultiple, true)) {
 			violations.push(
 				`margin-top: ${margin.top}px は許可された値ではありません`,
@@ -198,9 +179,6 @@ function validateMargin(element: HTMLElement, rules: DesignRule): string[] {
 	}
 
 	if (rules.margin !== undefined && rules.marginMultiple === undefined) {
-		if (!isValidNumber(margin.all, rules.margin, false)) {
-			violations.push(`margin: ${margin.all}px は許可された値ではありません`);
-		}
 		if (!isValidNumber(margin.top, rules.margin, false)) {
 			violations.push(
 				`margin-top: ${margin.top}px は許可された値ではありません`,
@@ -224,12 +202,6 @@ function validateMargin(element: HTMLElement, rules: DesignRule): string[] {
 	}
 
 	if (rules.margin !== undefined && rules.marginMultiple !== undefined) {
-		if (
-			!isValidNumber(margin.all, rules.margin, false) &&
-			!isValidNumber(margin.all, rules.marginMultiple, true)
-		) {
-			violations.push(`margin: ${margin.all}px は許可された値ではありません`);
-		}
 		if (
 			!isValidNumber(margin.top, rules.margin, false) &&
 			!isValidNumber(margin.top, rules.marginMultiple, true)
@@ -442,8 +414,6 @@ export function validate(
 	element: HTMLElement,
 	rules: DesignRule,
 ): ValidationResult {
-	console.log("Validating element:");
-	console.log(rules);
 	const violations: string[] = [
 		...validatePadding(element, rules),
 		...validateMargin(element, rules),
