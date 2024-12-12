@@ -1,235 +1,462 @@
-import type { DesignRule, ValidationResult } from '../types/rules';
+import type { DesignRule, ValidationResult } from "../types/rules";
 
-// 値が倍数ルールに従っているかチェック
-function checkMultiple(value: number, multiple: string[]): boolean {
-  // 一つでも余りが0以外のものがあればfalseを返す
-  return multiple.every(m => value % Number.parseInt(m) === 0);
-}
+const isValidNumber = (
+	value: number,
+	rule: string[],
+	isMulti: boolean,
+): boolean => {
+	if (isMulti) {
+		// 配列が空の場合はtrueを返す
+		if (rule.length === 0) {
+			return true;
+		}
+		// valueの値がruleの倍数であるかどうかを判定。倍数でない場合はfalseを返す
+		return rule.some((r) => value % Number.parseInt(r) === 0);
+	}
+	// 配列が空の場合はtrueを返す
+	if (rule.length === 0) {
+		return true;
+	}
+	// valueの値がruleに含まれているかどうかを判定。含まれていない場合はfalseを返す
+	return rule.includes(value.toString());
+};
 
 // パディングのバリデーション
 function validatePadding(element: HTMLElement, rules: DesignRule): string[] {
-  if (rules.padding === undefined && rules.paddingMultiple === undefined) {
-    return [];
-  }
-  const violations: string[] = [];
-  const computedStyle = window.getComputedStyle(element);
-  const padding = Number.parseInt(computedStyle.padding);
-  console.log('Padding:', padding);
-  const paddingTop = Number.parseInt(computedStyle.paddingTop);
-  const paddingRight = Number.parseInt(computedStyle.paddingRight);
-  const paddingBottom = Number.parseInt(computedStyle.paddingBottom);
-  const paddingLeft = Number.parseInt(computedStyle.paddingLeft);
-  console.log('PaddingTop:', paddingTop);
-  console.log('PaddingRight:', paddingRight);
-  console.log('PaddingBottom:', paddingBottom);
-  console.log('PaddingLeft:', paddingLeft);
+	if (rules.padding === undefined && rules.paddingMultiple === undefined) {
+		return [];
+	}
 
+	const violations: string[] = [];
+	const computedStyle = window.getComputedStyle(element);
 
-  if (rules.paddingMultiple && rules.padding === undefined && !checkMultiple(padding, rules.paddingMultiple)) {
-    violations.push(`パディング ${padding}px は ${rules.paddingMultiple} の倍数ではありません`);
-  }
+	const padding = {
+		top: Number.parseInt(computedStyle.paddingTop),
+		right: Number.parseInt(computedStyle.paddingRight),
+		bottom: Number.parseInt(computedStyle.paddingBottom),
+		left: Number.parseInt(computedStyle.paddingLeft),
+		all: Number.parseInt(computedStyle.padding), // 一括指定の値も保持
+	};
 
-  if (rules.paddingMultiple === undefined && rules.padding && !rules.padding.includes(padding.toString())) {
-    violations.push(`パディング ${padding}px は許可された値 (${rules.padding.join(', ')}) ではありません`);
-  }
+	if (
+		padding.all === 0 &&
+		padding.top === 0 &&
+		padding.right === 0 &&
+		padding.bottom === 0 &&
+		padding.left === 0
+	) {
+		return [];
+	}
 
-  if (rules.paddingMultiple && rules.padding && !rules.padding.includes(padding.toString())) {
-    violations.push(`パディング ${padding}px は ${rules.paddingMultiple} の倍数でも許可された値でもありません`);
-  }
+	if (rules.padding === undefined && rules.paddingMultiple !== undefined) {
+		if (!isValidNumber(padding.all, rules.paddingMultiple, true)) {
+			violations.push(`padding: ${padding.all}px は許可された値ではありません`);
+		}
+		if (!isValidNumber(padding.top, rules.paddingMultiple, true)) {
+			violations.push(
+				`padding-top: ${padding.top}px は許可された値ではありません`,
+			);
+		}
+		if (!isValidNumber(padding.right, rules.paddingMultiple, true)) {
+			violations.push(
+				`padding-right: ${padding.right}px は許可された値ではありません`,
+			);
+		}
+		if (!isValidNumber(padding.bottom, rules.paddingMultiple, true)) {
+			violations.push(
+				`padding-bottom: ${padding.bottom}px は許可された値ではありません`,
+			);
+		}
+		if (!isValidNumber(padding.left, rules.paddingMultiple, true)) {
+			violations.push(
+				`padding-left: ${padding.left}px は許可された値ではありません`,
+			);
+		}
+	}
 
-  return violations;
+	if (rules.padding !== undefined && rules.paddingMultiple === undefined) {
+		if (!isValidNumber(padding.all, rules.padding, false)) {
+			violations.push(`padding: ${padding.all}px は許可された値ではありません`);
+		}
+		if (!isValidNumber(padding.top, rules.padding, false)) {
+			violations.push(
+				`padding-top: ${padding.top}px は許可された値ではありません`,
+			);
+		}
+		if (!isValidNumber(padding.right, rules.padding, false)) {
+			violations.push(
+				`padding-right: ${padding.right}px は許可された値ではありません`,
+			);
+		}
+		if (!isValidNumber(padding.bottom, rules.padding, false)) {
+			violations.push(
+				`padding-bottom: ${padding.bottom}px は許可された値ではありません`,
+			);
+		}
+		if (!isValidNumber(padding.left, rules.padding, false)) {
+			violations.push(
+				`padding-left: ${padding.left}px は許可された値ではありません`,
+			);
+		}
+	}
+
+	if (rules.padding !== undefined && rules.paddingMultiple !== undefined) {
+		if (
+			!isValidNumber(padding.all, rules.padding, false) &&
+			!isValidNumber(padding.all, rules.paddingMultiple, true)
+		) {
+			violations.push(`padding: ${padding.all}px は許可された値ではありません`);
+		}
+		if (
+			!isValidNumber(padding.top, rules.padding, false) &&
+			!isValidNumber(padding.top, rules.paddingMultiple, true)
+		) {
+			violations.push(
+				`padding-top: ${padding.top}px は許可された値ではありません`,
+			);
+		}
+		if (
+			!isValidNumber(padding.right, rules.padding, false) &&
+			!isValidNumber(padding.right, rules.paddingMultiple, true)
+		) {
+			violations.push(
+				`padding-right: ${padding.right}px は許可された値ではありません`,
+			);
+		}
+		if (
+			!isValidNumber(padding.bottom, rules.padding, false) &&
+			!isValidNumber(padding.bottom, rules.paddingMultiple, true)
+		) {
+			violations.push(
+				`padding-bottom: ${padding.bottom}px は許可された値ではありません`,
+			);
+		}
+		if (
+			!isValidNumber(padding.left, rules.padding, false) &&
+			!isValidNumber(padding.left, rules.paddingMultiple, true)
+		) {
+			violations.push(
+				`padding-left: ${padding.left}px は許可された値ではありません`,
+			);
+		}
+	}
+
+	return violations;
 }
 
 // マージンのバリデーション
 function validateMargin(element: HTMLElement, rules: DesignRule): string[] {
-  if (!element.style.margin) {
-    return [];
-  }
-  const violations: string[] = [];
-  const computedStyle = window.getComputedStyle(element);
-  const margin = Number.parseInt(computedStyle.margin);
+	if (rules.margin === undefined && rules.marginMultiple === undefined) {
+		return [];
+	}
 
-  if (rules.marginMultiple && rules.margin === undefined && !checkMultiple(margin, rules.marginMultiple)) {
-    violations.push(`マージン ${margin}px は ${rules.marginMultiple} の倍数ではありません`);
-  }
+	const violations: string[] = [];
+	const computedStyle = window.getComputedStyle(element);
 
-  if (rules.marginMultiple === undefined && rules.margin && !rules.margin.includes(margin.toString())) {
-    violations.push(`マージン ${margin}px は許可された値 (${rules.margin.join(', ')}) ではありません`);
-  }
+	const margin = {
+		top: Number.parseInt(computedStyle.marginTop),
+		right: Number.parseInt(computedStyle.marginRight),
+		bottom: Number.parseInt(computedStyle.marginBottom),
+		left: Number.parseInt(computedStyle.marginLeft),
+		all: Number.parseInt(computedStyle.margin), // 一括指定の値も保持
+	};
 
-  if (rules.marginMultiple && rules.margin && !rules.margin.includes(margin.toString())) {
-    violations.push(`マージン ${margin}px は ${rules.marginMultiple} の倍数でも許可された値でもありません`);
-  }
+	if (
+		margin.all === 0 &&
+		margin.top === 0 &&
+		margin.right === 0 &&
+		margin.bottom === 0 &&
+		margin.left === 0
+	) {
+		return [];
+	}
 
-  return violations;
+	if (rules.margin === undefined && rules.marginMultiple !== undefined) {
+		if (!isValidNumber(margin.all, rules.marginMultiple, true)) {
+			violations.push(`margin: ${margin.all}px は許可された値ではありません`);
+		}
+		if (!isValidNumber(margin.top, rules.marginMultiple, true)) {
+			violations.push(
+				`margin-top: ${margin.top}px は許可された値ではありません`,
+			);
+		}
+		if (!isValidNumber(margin.right, rules.marginMultiple, true)) {
+			violations.push(
+				`margin-right: ${margin.right}px は許可された値ではありません`,
+			);
+		}
+		if (!isValidNumber(margin.bottom, rules.marginMultiple, true)) {
+			violations.push(
+				`margin-bottom: ${margin.bottom}px は許可された値ではありません`,
+			);
+		}
+		if (!isValidNumber(margin.left, rules.marginMultiple, true)) {
+			violations.push(
+				`margin-left: ${margin.left}px は許可された値ではありません`,
+			);
+		}
+	}
+
+	if (rules.margin !== undefined && rules.marginMultiple === undefined) {
+		if (!isValidNumber(margin.all, rules.margin, false)) {
+			violations.push(`margin: ${margin.all}px は許可された値ではありません`);
+		}
+		if (!isValidNumber(margin.top, rules.margin, false)) {
+			violations.push(
+				`margin-top: ${margin.top}px は許可された値ではありません`,
+			);
+		}
+		if (!isValidNumber(margin.right, rules.margin, false)) {
+			violations.push(
+				`margin-right: ${margin.right}px は許可された値ではありません`,
+			);
+		}
+		if (!isValidNumber(margin.bottom, rules.margin, false)) {
+			violations.push(
+				`margin-bottom: ${margin.bottom}px は許可された値ではありません`,
+			);
+		}
+		if (!isValidNumber(margin.left, rules.margin, false)) {
+			violations.push(
+				`margin-left: ${margin.left}px は許可された値ではありません`,
+			);
+		}
+	}
+
+	if (rules.margin !== undefined && rules.marginMultiple !== undefined) {
+		if (
+			!isValidNumber(margin.all, rules.margin, false) &&
+			!isValidNumber(margin.all, rules.marginMultiple, true)
+		) {
+			violations.push(`margin: ${margin.all}px は許可された値ではありません`);
+		}
+		if (
+			!isValidNumber(margin.top, rules.margin, false) &&
+			!isValidNumber(margin.top, rules.marginMultiple, true)
+		) {
+			violations.push(
+				`margin-top: ${margin.top}px は許可された値ではありません`,
+			);
+		}
+		if (
+			!isValidNumber(margin.right, rules.margin, false) &&
+			!isValidNumber(margin.right, rules.marginMultiple, true)
+		) {
+			violations.push(
+				`margin-right: ${margin.right}px は許可された値ではありません`,
+			);
+		}
+		if (
+			!isValidNumber(margin.bottom, rules.margin, false) &&
+			!isValidNumber(margin.bottom, rules.marginMultiple, true)
+		) {
+			violations.push(
+				`margin-bottom: ${margin.bottom}px は許可された値ではありません`,
+			);
+		}
+		if (
+			!isValidNumber(margin.left, rules.margin, false) &&
+			!isValidNumber(margin.left, rules.marginMultiple, true)
+		) {
+			violations.push(
+				`margin-left: ${margin.left}px は許可された値ではありません`,
+			);
+		}
+	}
+
+	return violations;
 }
 
 // フォントのバリデーション
 function validateFonts(element: HTMLElement, rules: DesignRule): string[] {
-  if (rules.fonts === undefined) {
-    return [];
-  }
-  if (!element.style.fontFamily) {
-    return [];
-  }
-  const violations: string[] = [];
-  const computedStyle = window.getComputedStyle(element);
-  const fontFamily = computedStyle.fontFamily;
+	if (rules.fonts === undefined) {
+		return [];
+	}
+	if (!element.style.fontFamily) {
+		return [];
+	}
+	const violations: string[] = [];
+	const computedStyle = window.getComputedStyle(element);
+	const fontFamily = computedStyle.fontFamily;
 
-  if (rules.fonts && !rules.fonts.some(font => fontFamily.includes(font))) {
-    violations.push(`フォント "${fontFamily}" は許可された値 (${rules.fonts.join(', ')}) ではありません`);
-  }
+	// フォントファミリーに許可された値が一つでも含まれていなければ違反とする
+	if (!rules.fonts.some((font) => fontFamily.includes(font))) {
+		violations.push(
+			`フォントファミリー ${fontFamily} は許可された値ではありません`,
+		);
+	}
 
-  return violations;
+	return violations;
 }
 
 // フォントサイズのバリデーション
 function validateFontSize(element: HTMLElement, rules: DesignRule): string[] {
-  if (rules.fontSize === undefined) {
-    return [];
-  }
-  if (!element.style.fontSize) {
-    return [];
-  }
-  const violations: string[] = [];
-  const computedStyle = window.getComputedStyle(element);
-  const fontSize = Number.parseInt(computedStyle.fontSize);
+	if (rules.fontSize === undefined && rules.fontSizeMultiple === undefined) {
+		return [];
+	}
+	if (!element.style.fontSize) {
+		return [];
+	}
+	const violations: string[] = [];
+	const computedStyle = window.getComputedStyle(element);
+	const fontSize = Number.parseInt(computedStyle.fontSize);
 
-  if (rules.fontSizeMultiple && rules.fontSize === undefined && !checkMultiple(fontSize, rules.fontSizeMultiple)) {
-    violations.push(`フォントサイズ ${fontSize}px は ${rules.fontSizeMultiple} の倍数ではありません`);
-  }
-
-  if (rules.fontSizeMultiple === undefined && rules.fontSize && !rules.fontSize.includes(fontSize.toString())) {
-    violations.push(`フォントサイズ ${fontSize}px は許可された値 (${rules.fontSize.join(', ')}) ではありません`);
-  }
-
-  if (rules.fontSizeMultiple && rules.fontSize && !rules.fontSize.includes(fontSize.toString())) {
-    violations.push(`フォントサイズ ${fontSize}px は ${rules.fontSizeMultiple} の倍数でも許可された値でもありません`);
-  }
-
-  return violations;
+	if (
+		rules.fontSizeMultiple &&
+		rules.fontSize === undefined &&
+		!isValidNumber(fontSize, rules.fontSizeMultiple, true)
+	) {
+		violations.push(
+			`フォントサイズ ${fontSize}px は許可された値ではありません`,
+		);
+	}
+	if (
+		rules.fontSizeMultiple === undefined &&
+		rules.fontSize &&
+		!isValidNumber(fontSize, rules.fontSize, false)
+	) {
+		violations.push(
+			`フォントサイズ ${fontSize}px は許可された値ではありません`,
+		);
+	}
+	if (rules.fontSizeMultiple && rules.fontSize) {
+		if (
+			!isValidNumber(fontSize, rules.fontSize, false) &&
+			!isValidNumber(fontSize, rules.fontSizeMultiple, true)
+		) {
+			violations.push(
+				`フォントサイズ ${fontSize}px は許可された値ではありません`,
+			);
+		}
+	}
+	return violations;
 }
 
 // フォントカラーのバリデーション
 function validateFontColor(element: HTMLElement, rules: DesignRule): string[] {
-  if (rules.fontColor === undefined) {
-    return [];
-  }
-  if (!element.style.color) {
-    return [];
-  }
-  const violations: string[] = [];
-  const computedStyle = window.getComputedStyle(element);
-  const color = rgbToHex(computedStyle.color);
+	if (rules.fontColor === undefined) {
+		return [];
+	}
+	if (!element.style.color) {
+		return [];
+	}
+	const violations: string[] = [];
+	const computedStyle = window.getComputedStyle(element);
+	const color = rgbToHex(computedStyle.color);
 
-  if (rules.fontColor && !rules.fontColor.includes(color)) {
-    violations.push(`フォントカラー ${color} は許可された値 (${rules.fontColor.join(', ')}) ではありません`);
-  }
+	if (!rules.fontColor.some((x) => color === x)) {
+		violations.push(`フォントカラー ${color} は許可された値ではありません`);
+	}
 
-  return violations;
+	return violations;
 }
 
 // 背景色のバリデーション
-function validateBackgroundColor(element: HTMLElement, rules: DesignRule): string[] {
-  if (rules.backgroundColor === undefined) {
-    return [];
-  }
-  if (!element.style.backgroundColor) {
-    return [];
-  }
-  const violations: string[] = [];
-  const computedStyle = window.getComputedStyle(element);
-  const backgroundColor = rgbToHex(computedStyle.backgroundColor);
+function validateBackgroundColor(
+	element: HTMLElement,
+	rules: DesignRule,
+): string[] {
+	if (rules.backgroundColor === undefined) {
+		return [];
+	}
+	if (!element.style.backgroundColor) {
+		return [];
+	}
+	const violations: string[] = [];
+	const computedStyle = window.getComputedStyle(element);
+	const backgroundColor = rgbToHex(computedStyle.backgroundColor);
 
-  if (rules.backgroundColor && !rules.backgroundColor.includes(backgroundColor)) {
-    violations.push(`背景色 ${backgroundColor} は許可された値 (${rules.backgroundColor.join(', ')}) ではありません`);
-  }
+	if (!rules.backgroundColor.some((x) => backgroundColor === x)) {
+		violations.push(`背景色 ${backgroundColor} は許可された値ではありません`);
+	}
 
-  return violations;
+	return violations;
 }
 
 // ボーダーカラーのバリデーション
-function validateBorderColor(element: HTMLElement, rules: DesignRule): string[] {
-  if (rules.borderColor === undefined) {
-    return [];
-  }
-  if (!element.style.borderColor) {
-    return [];
-  }
-  const violations: string[] = [];
-  const computedStyle = window.getComputedStyle(element);
-  const borderColor = rgbToHex(computedStyle.borderColor);
+function validateBorderColor(
+	element: HTMLElement,
+	rules: DesignRule,
+): string[] {
+	if (rules.borderColor === undefined) {
+		return [];
+	}
+	if (!element.style.borderColor) {
+		return [];
+	}
+	const violations: string[] = [];
+	const computedStyle = window.getComputedStyle(element);
+	const borderColor = rgbToHex(computedStyle.borderColor);
 
-  if (rules.borderColor && !rules.borderColor.includes(borderColor)) {
-    violations.push(`ボーダーカラー ${borderColor} は許可された値 (${rules.borderColor.join(', ')}) ではありません`);
-  }
+	if (!rules.borderColor.some((x) => borderColor === x)) {
+		violations.push(
+			`ボーダーカラー ${borderColor} は許可された値ではありません`,
+		);
+	}
 
-  return violations;
+	return violations;
 }
 
 // ボーダー幅のバリデーション
-function validateBorderWidth(element: HTMLElement, rules: DesignRule): string[] {
-  if (rules.borderWidth === undefined) {
-    return [];
-  }
-  if (!element.style.borderWidth) {
-    return [];
-  }
-  const violations: string[] = [];
-  const computedStyle = window.getComputedStyle(element);
-  const borderWidth = Number.parseInt(computedStyle.borderWidth);
+function validateBorderWidth(
+	element: HTMLElement,
+	rules: DesignRule,
+): string[] {
+	if (rules.borderWidth === undefined) {
+		return [];
+	}
+	if (!element.style.borderWidth) {
+		return [];
+	}
+	const violations: string[] = [];
+	const computedStyle = window.getComputedStyle(element);
+	const borderWidth = Number.parseInt(computedStyle.borderWidth);
 
-  if (rules.borderWidthMultiple && rules.borderWidth === undefined && !checkMultiple(borderWidth, rules.borderWidthMultiple)) {
-    violations.push(`ボーダー幅 ${borderWidth}px は ${rules.borderWidthMultiple} の倍数ではありません`);
-  }
-
-  if (rules.borderWidthMultiple === undefined && rules.borderWidth && !rules.borderWidth.includes(borderWidth.toString())) {
-    violations.push(`ボーダー幅 ${borderWidth}px は許可された値 (${rules.borderWidth.join(', ')}) ではありません`);
-  }
-
-  if (rules.borderWidthMultiple && rules.borderWidth && !rules.borderWidth.includes(borderWidth.toString())) {
-    violations.push(`ボーダー幅 ${borderWidth}px は ${rules.borderWidthMultiple} の倍数でも許可された値でもありません`);
-  }
-
-  return violations;
+	if (!rules.borderWidth.some((x) => borderWidth === Number.parseInt(x))) {
+		violations.push(`ボーダー幅 ${borderWidth}px は許可された値ではありません`);
+	}
+	return violations;
 }
 
 // RGBカラーを16進数カラーコードに変換
 function rgbToHex(rgb: string): string {
-  // rgb(r, g, b) 形式の文字列から数値を抽出
-  const matches = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-  if (!matches) return rgb;
+	// rgb(r, g, b) 形式の文字列から数値を抽出
+	const matches = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+	if (!matches) return rgb;
 
-  const r = Number.parseInt(matches[1]);
-  const g = Number.parseInt(matches[2]);
-  const b = Number.parseInt(matches[3]);
+	const r = Number.parseInt(matches[1]);
+	const g = Number.parseInt(matches[2]);
+	const b = Number.parseInt(matches[3]);
 
-  // 16進数に変換
-  const toHex = (n: number): string => {
-    const hex = n.toString(16);
-    return hex.length === 1 ? `0${hex}` : hex;
-  };
+	// 16進数に変換
+	const toHex = (n: number): string => {
+		const hex = n.toString(16);
+		return hex.length === 1 ? `0${hex}` : hex;
+	};
 
-  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+	return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
 // すべてのバリデーションを実行
-export function validate(element: HTMLElement, rules: DesignRule): ValidationResult {
-  console.log('Validating element:');
-  console.log(rules);
-  const violations: string[] = [
-    ...validatePadding(element, rules),
-    ...validateMargin(element, rules),
-    ...validateFonts(element, rules),
-    ...validateFontSize(element, rules),
-    ...validateFontColor(element, rules),
-    ...validateBackgroundColor(element, rules),
-    ...validateBorderColor(element, rules),
-    ...validateBorderWidth(element, rules)
-  ];
+export function validate(
+	element: HTMLElement,
+	rules: DesignRule,
+): ValidationResult {
+	console.log("Validating element:");
+	console.log(rules);
+	const violations: string[] = [
+		...validatePadding(element, rules),
+		...validateMargin(element, rules),
+		...validateFonts(element, rules),
+		...validateFontSize(element, rules),
+		...validateFontColor(element, rules),
+		...validateBackgroundColor(element, rules),
+		...validateBorderColor(element, rules),
+		...validateBorderWidth(element, rules),
+	];
 
-  return {
-    element,
-    violations
-  };
+	return {
+		element,
+		violations,
+	};
 }
