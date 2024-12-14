@@ -5,6 +5,7 @@
   <title>デザインチェッカー</title>
   <link rel="stylesheet" href="src/styles/popup.css">
   <meta charset="UTF-8">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/destyle.css@1.0.15/destyle.css" />
 </head>
 
 <body>
@@ -27,49 +28,55 @@
     </div>
 
     <div class="rules-container">
-      <div class="rule-wrapper">
-        <label for="padding">パディング (px)</label>
-        <input id="padding" class="rule-input" type="text" placeholder="パディング (カンマ区切り)">
+      <div class="rule-description">
+        <h2>ルールの設定</h2>
+        <p>・指定した値に当てはまらない場合、表示中のタブにエラーが表示されます。</p>
+        <p>・カンマ区切りで複数指定することができます。（例: 4,8,12）</p>
+        <p>・複数指定の場合、いずれにも当てはまらない要素がエラーとなります。</p>
       </div>
       <div class="rule-wrapper">
-        <label for="paddingMultiple">パディング (倍数)</label>
-        <input id="paddingMultiple" class="rule-input" type="text" placeholder="パディング (倍数)">
+        <label for="padding">Padding (px)</label>
+        <input id="padding" class="rule-input" type="text" placeholder="8,16,24（単位は入力しないでください）">
       </div>
       <div class="rule-wrapper">
-        <label for="margin">マージン (px)</label>
-        <input id="margin" class="rule-input" type="text" placeholder="マージン (カンマ区切り)">
+        <label for="paddingMultiple">Padding (倍数)</label>
+        <input id="paddingMultiple" class="rule-input" type="text" placeholder="2,4,8（値の倍数以外のpaddingの場合にエラー）">
       </div>
       <div class="rule-wrapper">
-        <label for="marginMultiple">マージン (倍数)</label>
-        <input id="marginMultiple" class="rule-input" type="text" placeholder="マージン (倍数)">
+        <label for="margin">Margin (px)</label>
+        <input id="margin" class="rule-input" type="text" placeholder="8,16,24（単位は入力しないでください）">
       </div>
       <div class="rule-wrapper">
-        <label for="fonts">フォント</label>
-        <input id="fonts" class="rule-input" type="text" placeholder="フォント (例: Arial, Helvetica)">
+        <label for="marginMultiple">Margin (倍数)</label>
+        <input id="marginMultiple" class="rule-input" type="text" placeholder="2,4,8（値の倍数以外のmarginの場合にエラー）">
       </div>
       <div class="rule-wrapper">
-        <label for="fontSize">フォントサイズ (px)</label>
-        <input id="fontSize" class="rule-input" type="text" placeholder="フォントサイズ (カンマ区切りで複数指定)">
+        <label for="fonts">Font</label>
+        <input id="fonts" class="rule-input" type="text" placeholder="Arial,Helvetica （部分一致）">
       </div>
       <div class="rule-wrapper">
-        <label for="fontSizeMultiple">フォントサイズ (倍数)</label>
-        <input id="fontSizeMultiple" class="rule-input" type="text" placeholder="フォントサイズ (倍数)">
+        <label for="fontSize">FontSize (px)</label>
+        <input id="fontSize" class="rule-input" type="text" placeholder="12,16,24 (単位は入力しないでください)">
       </div>
       <div class="rule-wrapper">
-        <label for="fontColor">フォントの色</label>
-        <input id="fontColor" class="rule-input" type="text" placeholder="フォントの色 (例: #000000)">
+        <label for="fontSizeMultiple">FontSize (倍数)</label>
+        <input id="fontSizeMultiple" class="rule-input" type="text" placeholder="2,4,8 (値の倍数以外のfont-sizeの場合にエラー)">
       </div>
       <div class="rule-wrapper">
-        <label for="backgroundColor">背景色</label>
-        <input id="backgroundColor" class="rule-input" type="text" placeholder="背景色 (例: #FFFFFF)">
+        <label for="fontColor">Color (HEX)</label>
+        <input id="fontColor" class="rule-input" type="text" placeholder="#00000,#333333 (HEXで指定)">
       </div>
       <div class="rule-wrapper">
-        <label for="borderColor">境界線の色</label>
-        <input id="borderColor" class="rule-input" type="text" placeholder="境界線の色 (例: #CCCCCC)">
+        <label for="backgroundColor">BackGroundColor (HEX)</label>
+        <input id="backgroundColor" class="rule-input" type="text" placeholder="#FFFFFF,#CCCCCC (HEXで指定)">
       </div>
       <div class="rule-wrapper">
-        <label for="borderWidth">境界線の幅 (px)</label>
-        <input id="borderWidth" class="rule-input" type="text" placeholder="境界線の幅 (カンマ区切り)">
+        <label for="borderColor">BorderColor (HEX)</label>
+        <input id="borderColor" class="rule-input" type="text" placeholder="#CCCCCC,#333333 (HEXで指定)">
+      </div>
+      <div class="rule-wrapper">
+        <label for="borderWidth">BorderWidth (px)</label>
+        <input id="borderWidth" class="rule-input" type="text" placeholder="1,2,3 (単位は入力しないでください)">
       </div>
     </div>
   </div>

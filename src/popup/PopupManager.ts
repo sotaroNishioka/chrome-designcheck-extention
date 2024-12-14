@@ -116,7 +116,7 @@ async function sendRulesToActiveTab() {
 
 // ルールを保存する関数
 async function saveCurrentRules() {
-	const name = prompt("Enter a name for this rule set:");
+	const name = prompt("保存するルールの名前を入力:");
 	if (name) {
 		await saveRuleSet(name, currentRules);
 		await loadSavedRuleSets();
@@ -127,6 +127,10 @@ async function saveCurrentRules() {
 async function loadSavedRuleSets() {
 	const ruleSets = await getRuleSets();
 	savedRuleSetsSelect.innerHTML = "";
+	const option = document.createElement("option");
+	option.value = "none";
+	option.textContent = "保存されたルールを選択　▼";
+	savedRuleSetsSelect.appendChild(option);
 	for (const { name } of ruleSets) {
 		const option = document.createElement("option");
 		option.value = name;
@@ -138,6 +142,7 @@ async function loadSavedRuleSets() {
 // ルールセットを読み込む関数
 async function loadSelectedRuleSet() {
 	const name = savedRuleSetsSelect.value;
+	if (name === "none") return;
 	const ruleSets = await getRuleSets();
 	const ruleSet = ruleSets.find((set) => set.name === name);
 
@@ -151,7 +156,8 @@ async function loadSelectedRuleSet() {
 // ルールセットを削除する関数
 async function deleteSelectedRuleSet() {
 	const name = savedRuleSetsSelect.value;
-	if (name && confirm(`Delete rule set "${name}"?`)) {
+	if (name === "none") return;
+	if (name && confirm(`このルールを削除しますか？ "${name}"?`)) {
 		await deleteRuleSet(name);
 		await loadSavedRuleSets();
 	}
@@ -161,19 +167,19 @@ async function deleteSelectedRuleSet() {
 function exportRules() {
 	const json = JSON.stringify(currentRules, null, 2);
 	navigator.clipboard.writeText(json);
-	alert("Rules copied to clipboard!");
+	alert("ルールをクリップボードにコピーしました");
 }
 
 // ルールをインポートする関数
 async function importRules() {
-	const json = prompt("Paste rules JSON:");
+	const json = prompt("エクスポートしたjsonを貼り付け:");
 	if (json) {
 		try {
 			currentRules = JSON.parse(json);
 			await updateRules();
 			await loadCurrentState();
 		} catch (error) {
-			alert("Invalid JSON format!");
+			alert("ルールのインポートに失敗しました");
 		}
 	}
 }
