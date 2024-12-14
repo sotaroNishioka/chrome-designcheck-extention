@@ -330,7 +330,7 @@ function validateFontColor(element: HTMLElement, rules: DesignRule): string[] {
 		return [];
 	}
 	const violations: string[] = [];
-	const color = rgbToHex(computedStyle.color);
+	const color = colorToHex(computedStyle.color);
 
 	if (!rules.fontColor.some((x) => color === x)) {
 		violations.push(`color ${color} は許可された値ではありません`);
@@ -352,7 +352,7 @@ function validateBackgroundColor(
 		return [];
 	}
 	const violations: string[] = [];
-	const backgroundColor = rgbToHex(computedStyle.backgroundColor);
+	const backgroundColor = colorToHex(computedStyle.backgroundColor);
 
 	if (!rules.backgroundColor.some((x) => backgroundColor === x)) {
 		violations.push(
@@ -376,7 +376,7 @@ function validateBorderColor(
 		return [];
 	}
 	const violations: string[] = [];
-	const borderColor = rgbToHex(computedStyle.borderColor);
+	const borderColor = colorToHex(computedStyle.borderColor);
 
 	if (!rules.borderColor.some((x) => borderColor === x)) {
 		violations.push(`border-color ${borderColor} は許可された値ではありません`);
@@ -399,32 +399,101 @@ function validateBorderWidth(
 	}
 	const violations: string[] = [];
 	const borderWidth = Number.parseInt(computedStyle.borderWidth);
-
-	if (!rules.borderWidth.some((x) => borderWidth === Number.parseInt(x))) {
+	const borderBottomWidth = Number.parseInt(computedStyle.borderBottomWidth);
+	const borderLeftWidth = Number.parseInt(computedStyle.borderLeftWidth);
+	const borderRightWidth = Number.parseInt(computedStyle.borderRightWidth);
+	const borderTopWidth = Number.parseInt(computedStyle.borderTopWidth);
+	// 0pxの場合は許可する
+	if (
+		!["0", ...rules.borderWidth].some((x) => borderWidth === Number.parseInt(x))
+	) {
 		violations.push(
 			`border-width ${borderWidth}px は許可された値ではありません`,
+		);
+	}
+	if (
+		!["0", ...rules.borderWidth].some(
+			(x) => borderBottomWidth === Number.parseInt(x),
+		)
+	) {
+		violations.push(
+			`border-bottom-width ${borderBottomWidth}px は許可された値ではありません`,
+		);
+	}
+	if (
+		!["0", ...rules.borderWidth].some(
+			(x) => borderLeftWidth === Number.parseInt(x),
+		)
+	) {
+		violations.push(
+			`border-left-width ${borderLeftWidth}px は許可された値ではありません`,
+		);
+	}
+	if (
+		!["0", ...rules.borderWidth].some(
+			(x) => borderRightWidth === Number.parseInt(x),
+		)
+	) {
+		violations.push(
+			`border-right-width ${borderRightWidth}px は許可された値ではありません`,
+		);
+	}
+	if (
+		!["0", ...rules.borderWidth].some(
+			(x) => borderTopWidth === Number.parseInt(x),
+		)
+	) {
+		violations.push(
+			`border-top-width ${borderTopWidth}px は許可された値ではありません`,
 		);
 	}
 	return violations;
 }
 
-// RGBカラーを16進数カラーコードに変換
-function rgbToHex(rgb: string): string {
-	// rgb(r, g, b) 形式の文字列から数値を抽出
-	const matches = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-	if (!matches) return rgb;
+function colorToHex(color: string): string {
+	// 16進数カラーコードの場合
+	if (color.startsWith("#")) {
+		return color.toLowerCase();
+	}
+	// rgba(r, g, b, a) の場合
+	if (color.startsWith("rgba")) {
+		const rgbaMatches = color.match(
+			/^rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)$/,
+		);
+		if (rgbaMatches) {
+			const r = Number.parseInt(rgbaMatches[1]);
+			const g = Number.parseInt(rgbaMatches[2]);
+			const b = Number.parseInt(rgbaMatches[3]);
+			const toHex = (n: number): string => {
+				const hex = n.toString(16);
+				return hex.length === 1 ? `0${hex}` : hex;
+			};
+			return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+		}
+	}
 
-	const r = Number.parseInt(matches[1]);
-	const g = Number.parseInt(matches[2]);
-	const b = Number.parseInt(matches[3]);
+	// rgb(r, g, b) の場合
+	if (color.startsWith("rgb")) {
+		const rgbMatches = color.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+		if (rgbMatches) {
+			const r = Number.parseInt(rgbMatches[1]);
+			const g = Number.parseInt(rgbMatches[2]);
+			const b = Number.parseInt(rgbMatches[3]);
+			const toHex = (n: number): string => {
+				const hex = n.toString(16);
+				return hex.length === 1 ? `0${hex}` : hex;
+			};
+			return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+		}
+	}
 
-	// 16進数に変換
-	const toHex = (n: number): string => {
-		const hex = n.toString(16);
-		return hex.length === 1 ? `0${hex}` : hex;
-	};
-
-	return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+	// 色名の場合
+	const tempDiv = document.createElement("div");
+	tempDiv.style.color = color;
+	document.body.appendChild(tempDiv);
+	const computedColor = window.getComputedStyle(tempDiv).color;
+	document.body.removeChild(tempDiv);
+	return colorToHex(computedColor);
 }
 
 // すべてのバリデーションを実行
