@@ -2,8 +2,6 @@ import { validate } from "./utils/validator";
 import type { Message } from "./types/messages";
 import "./styles/content.css";
 
-console.log("Content script loaded!");
-
 const createAlertIcon = (
 	violations: string[],
 	className: string,

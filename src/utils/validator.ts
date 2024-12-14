@@ -239,20 +239,23 @@ function validateMargin(element: HTMLElement, rules: DesignRule): string[] {
 	return violations;
 }
 
-// フォントのバリデーション
 function validateFonts(element: HTMLElement, rules: DesignRule): string[] {
-	if (rules.fonts === undefined) {
+	if (rules.fonts === undefined || rules.fonts.length === 0) {
 		return [];
 	}
-	if (!element.style.fontFamily) {
+	const computedStyle = window.getComputedStyle(element);
+	if (!computedStyle.fontFamily) {
 		return [];
 	}
 	const violations: string[] = [];
-	const computedStyle = window.getComputedStyle(element);
 	const fontFamily = computedStyle.fontFamily;
 
-	// フォントファミリーに許可された値が一つでも含まれていなければ違反とする
-	if (!rules.fonts.some((font) => fontFamily.includes(font))) {
+	const fontFamilyList = fontFamily
+		.split(",")
+		.map((font) => font.trim().replace(/"/g, "").toLowerCase());
+	const rulesFontsLower = rules.fonts.map((font) => font.toLowerCase());
+
+	if (!rulesFontsLower.some((ruleFont) => fontFamilyList.includes(ruleFont))) {
 		violations.push(
 			`フォントファミリー ${fontFamily} は許可された値ではありません`,
 		);
@@ -266,11 +269,11 @@ function validateFontSize(element: HTMLElement, rules: DesignRule): string[] {
 	if (rules.fontSize === undefined && rules.fontSizeMultiple === undefined) {
 		return [];
 	}
-	if (!element.style.fontSize) {
+	const computedStyle = window.getComputedStyle(element);
+	if (!computedStyle.fontSize) {
 		return [];
 	}
 	const violations: string[] = [];
-	const computedStyle = window.getComputedStyle(element);
 	const fontSize = Number.parseInt(computedStyle.fontSize);
 
 	if (
@@ -309,11 +312,11 @@ function validateFontColor(element: HTMLElement, rules: DesignRule): string[] {
 	if (rules.fontColor === undefined) {
 		return [];
 	}
-	if (!element.style.color) {
+	const computedStyle = window.getComputedStyle(element);
+	if (!computedStyle.color) {
 		return [];
 	}
 	const violations: string[] = [];
-	const computedStyle = window.getComputedStyle(element);
 	const color = rgbToHex(computedStyle.color);
 
 	if (!rules.fontColor.some((x) => color === x)) {
@@ -331,11 +334,11 @@ function validateBackgroundColor(
 	if (rules.backgroundColor === undefined) {
 		return [];
 	}
-	if (!element.style.backgroundColor) {
+	const computedStyle = window.getComputedStyle(element);
+	if (!computedStyle.backgroundColor) {
 		return [];
 	}
 	const violations: string[] = [];
-	const computedStyle = window.getComputedStyle(element);
 	const backgroundColor = rgbToHex(computedStyle.backgroundColor);
 
 	if (!rules.backgroundColor.some((x) => backgroundColor === x)) {
@@ -353,11 +356,11 @@ function validateBorderColor(
 	if (rules.borderColor === undefined) {
 		return [];
 	}
-	if (!element.style.borderColor) {
+	const computedStyle = window.getComputedStyle(element);
+	if (!computedStyle.borderColor) {
 		return [];
 	}
 	const violations: string[] = [];
-	const computedStyle = window.getComputedStyle(element);
 	const borderColor = rgbToHex(computedStyle.borderColor);
 
 	if (!rules.borderColor.some((x) => borderColor === x)) {
@@ -377,11 +380,11 @@ function validateBorderWidth(
 	if (rules.borderWidth === undefined) {
 		return [];
 	}
-	if (!element.style.borderWidth) {
+	const computedStyle = window.getComputedStyle(element);
+	if (!computedStyle.borderWidth) {
 		return [];
 	}
 	const violations: string[] = [];
-	const computedStyle = window.getComputedStyle(element);
 	const borderWidth = Number.parseInt(computedStyle.borderWidth);
 
 	if (!rules.borderWidth.some((x) => borderWidth === Number.parseInt(x))) {

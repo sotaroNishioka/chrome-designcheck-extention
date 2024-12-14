@@ -101,9 +101,7 @@ async function updateRules() {
 
 // アクティブなタブにルールを送信する関数
 async function sendRulesToActiveTab() {
-	console.log("Sending rules to active tab:", currentRules);
 	const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-	console.log("Active tab:", tab);
 	if (tab.id) {
 		chrome.tabs.sendMessage(
 			tab.id,
@@ -111,9 +109,7 @@ async function sendRulesToActiveTab() {
 				type: "CHECK_DESIGN",
 				rules: currentRules,
 			},
-			() => {
-				console.log("Message sent!");
-			},
+			() => {},
 		);
 	}
 }
