@@ -157,7 +157,7 @@ async function loadSelectedRuleSet() {
 async function deleteSelectedRuleSet() {
 	const name = savedRuleSetsSelect.value;
 	if (name === "none") return;
-	if (name && confirm(`このルールを削除しますか？ "${name}"?`)) {
+	if (name && confirm(`保存されたルール "${name}" を削除しますか？ ?`)) {
 		await deleteRuleSet(name);
 		await loadSavedRuleSets();
 	}

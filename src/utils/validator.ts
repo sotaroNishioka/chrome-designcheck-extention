@@ -256,9 +256,7 @@ function validateFonts(element: HTMLElement, rules: DesignRule): string[] {
 	const rulesFontsLower = rules.fonts.map((font) => font.toLowerCase());
 
 	if (!rulesFontsLower.some((ruleFont) => fontFamilyList.includes(ruleFont))) {
-		violations.push(
-			`フォントファミリー ${fontFamily} は許可された値ではありません`,
-		);
+		violations.push(`font-family ${fontFamily} は許可された値ではありません`);
 	}
 
 	return violations;
@@ -281,29 +279,44 @@ function validateFontSize(element: HTMLElement, rules: DesignRule): string[] {
 		rules.fontSize === undefined &&
 		!isValidNumber(fontSize, rules.fontSizeMultiple, true)
 	) {
-		violations.push(
-			`フォントサイズ ${fontSize}px は許可された値ではありません`,
-		);
+		violations.push(`font-size ${fontSize}px は許可された値ではありません`);
 	}
 	if (
 		rules.fontSizeMultiple === undefined &&
 		rules.fontSize &&
 		!isValidNumber(fontSize, rules.fontSize, false)
 	) {
-		violations.push(
-			`フォントサイズ ${fontSize}px は許可された値ではありません`,
-		);
+		violations.push(`font-size ${fontSize}px は許可された値ではありません`);
 	}
 	if (rules.fontSizeMultiple && rules.fontSize) {
 		if (
 			!isValidNumber(fontSize, rules.fontSize, false) &&
 			!isValidNumber(fontSize, rules.fontSizeMultiple, true)
 		) {
-			violations.push(
-				`フォントサイズ ${fontSize}px は許可された値ではありません`,
-			);
+			violations.push(`font-size ${fontSize}px は許可された値ではありません`);
 		}
 	}
+	return violations;
+}
+
+function validateFontWeight(element: HTMLElement, rules: DesignRule): string[] {
+	if (
+		rules.fontWeightMultiple === undefined ||
+		rules.fontWeightMultiple.length === 0
+	) {
+		return [];
+	}
+	const computedStyle = window.getComputedStyle(element);
+	if (!computedStyle.fontWeight) {
+		return [];
+	}
+	const violations: string[] = [];
+	const fontWeight = computedStyle.fontWeight;
+
+	if (!rules.fontWeightMultiple.some((x) => fontWeight === x)) {
+		violations.push(`font-weight ${fontWeight} は許可された値ではありません`);
+	}
+
 	return violations;
 }
 
@@ -320,7 +333,7 @@ function validateFontColor(element: HTMLElement, rules: DesignRule): string[] {
 	const color = rgbToHex(computedStyle.color);
 
 	if (!rules.fontColor.some((x) => color === x)) {
-		violations.push(`フォントカラー ${color} は許可された値ではありません`);
+		violations.push(`color ${color} は許可された値ではありません`);
 	}
 
 	return violations;
@@ -342,7 +355,9 @@ function validateBackgroundColor(
 	const backgroundColor = rgbToHex(computedStyle.backgroundColor);
 
 	if (!rules.backgroundColor.some((x) => backgroundColor === x)) {
-		violations.push(`背景色 ${backgroundColor} は許可された値ではありません`);
+		violations.push(
+			`background-color ${backgroundColor} は許可された値ではありません`,
+		);
 	}
 
 	return violations;
@@ -364,9 +379,7 @@ function validateBorderColor(
 	const borderColor = rgbToHex(computedStyle.borderColor);
 
 	if (!rules.borderColor.some((x) => borderColor === x)) {
-		violations.push(
-			`ボーダーカラー ${borderColor} は許可された値ではありません`,
-		);
+		violations.push(`border-color ${borderColor} は許可された値ではありません`);
 	}
 
 	return violations;
@@ -388,7 +401,9 @@ function validateBorderWidth(
 	const borderWidth = Number.parseInt(computedStyle.borderWidth);
 
 	if (!rules.borderWidth.some((x) => borderWidth === Number.parseInt(x))) {
-		violations.push(`ボーダー幅 ${borderWidth}px は許可された値ではありません`);
+		violations.push(
+			`border-width ${borderWidth}px は許可された値ではありません`,
+		);
 	}
 	return violations;
 }
@@ -422,6 +437,7 @@ export function validate(
 		...validateMargin(element, rules),
 		...validateFonts(element, rules),
 		...validateFontSize(element, rules),
+		...validateFontWeight(element, rules),
 		...validateFontColor(element, rules),
 		...validateBackgroundColor(element, rules),
 		...validateBorderColor(element, rules),
