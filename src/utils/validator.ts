@@ -11,7 +11,7 @@ const isValidNumber = (
 			return true;
 		}
 		// valueの値がruleの倍数であるかどうかを判定。倍数でない場合はfalseを返す
-		return rule.some((r) => value % Number.parseInt(r) === 0);
+		return rule.some((r) => value % Number.parseFloat(r) === 0);
 	}
 	// 配列が空の場合はtrueを返す
 	if (rule.length === 0) {
@@ -31,10 +31,10 @@ function validatePadding(element: HTMLElement, rules: DesignRule): string[] {
 	const computedStyle = window.getComputedStyle(element);
 
 	const padding = {
-		top: Number.parseInt(computedStyle.paddingTop),
-		right: Number.parseInt(computedStyle.paddingRight),
-		bottom: Number.parseInt(computedStyle.paddingBottom),
-		left: Number.parseInt(computedStyle.paddingLeft),
+		top: Number.parseFloat(computedStyle.paddingTop),
+		right: Number.parseFloat(computedStyle.paddingRight),
+		bottom: Number.parseFloat(computedStyle.paddingBottom),
+		left: Number.parseFloat(computedStyle.paddingLeft),
 	};
 
 	if (
@@ -140,10 +140,10 @@ function validateMargin(element: HTMLElement, rules: DesignRule): string[] {
 	const computedStyle = window.getComputedStyle(element);
 
 	const margin = {
-		top: Number.parseInt(computedStyle.marginTop),
-		right: Number.parseInt(computedStyle.marginRight),
-		bottom: Number.parseInt(computedStyle.marginBottom),
-		left: Number.parseInt(computedStyle.marginLeft),
+		top: Number.parseFloat(computedStyle.marginTop),
+		right: Number.parseFloat(computedStyle.marginRight),
+		bottom: Number.parseFloat(computedStyle.marginBottom),
+		left: Number.parseFloat(computedStyle.marginLeft),
 	};
 
 	if (
@@ -272,7 +272,7 @@ function validateFontSize(element: HTMLElement, rules: DesignRule): string[] {
 		return [];
 	}
 	const violations: string[] = [];
-	const fontSize = Number.parseInt(computedStyle.fontSize);
+	const fontSize = Number.parseFloat(computedStyle.fontSize);
 
 	if (
 		rules.fontSizeMultiple &&
@@ -398,14 +398,17 @@ function validateBorderWidth(
 		return [];
 	}
 	const violations: string[] = [];
-	const borderWidth = Number.parseInt(computedStyle.borderWidth);
-	const borderBottomWidth = Number.parseInt(computedStyle.borderBottomWidth);
-	const borderLeftWidth = Number.parseInt(computedStyle.borderLeftWidth);
-	const borderRightWidth = Number.parseInt(computedStyle.borderRightWidth);
-	const borderTopWidth = Number.parseInt(computedStyle.borderTopWidth);
-	// 0pxの場合は許可する
+	const borderWidth = Number.parseFloat(computedStyle.borderWidth);
+	const borderBottomWidth = Number.parseFloat(computedStyle.borderBottomWidth);
+	const borderLeftWidth = Number.parseFloat(computedStyle.borderLeftWidth);
+	const borderRightWidth = Number.parseFloat(computedStyle.borderRightWidth);
+	const borderTopWidth = Number.parseFloat(computedStyle.borderTopWidth);
+
+	//ルールが文字列の配列であることを考慮し、parseFloatで比較
 	if (
-		!["0", ...rules.borderWidth].some((x) => borderWidth === Number.parseInt(x))
+		!["0", ...rules.borderWidth].some(
+			(x) => borderWidth === Number.parseFloat(x),
+		)
 	) {
 		violations.push(
 			`border-width ${borderWidth}px は許可された値ではありません`,
@@ -413,7 +416,7 @@ function validateBorderWidth(
 	}
 	if (
 		!["0", ...rules.borderWidth].some(
-			(x) => borderBottomWidth === Number.parseInt(x),
+			(x) => borderBottomWidth === Number.parseFloat(x),
 		)
 	) {
 		violations.push(
@@ -422,7 +425,7 @@ function validateBorderWidth(
 	}
 	if (
 		!["0", ...rules.borderWidth].some(
-			(x) => borderLeftWidth === Number.parseInt(x),
+			(x) => borderLeftWidth === Number.parseFloat(x),
 		)
 	) {
 		violations.push(
@@ -431,7 +434,7 @@ function validateBorderWidth(
 	}
 	if (
 		!["0", ...rules.borderWidth].some(
-			(x) => borderRightWidth === Number.parseInt(x),
+			(x) => borderRightWidth === Number.parseFloat(x),
 		)
 	) {
 		violations.push(
@@ -440,7 +443,7 @@ function validateBorderWidth(
 	}
 	if (
 		!["0", ...rules.borderWidth].some(
-			(x) => borderTopWidth === Number.parseInt(x),
+			(x) => borderTopWidth === Number.parseFloat(x),
 		)
 	) {
 		violations.push(
