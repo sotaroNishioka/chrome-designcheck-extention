@@ -77,6 +77,7 @@ function setEventListeners() {
 function handleInputChange(event: Event) {
 	const input = event.target as HTMLInputElement;
 	const id = input.id;
+	// 入力値が空の場合はcurrentRulesから削除
 	if (input.value === "") {
 		delete currentRules[id];
 		updateRules();

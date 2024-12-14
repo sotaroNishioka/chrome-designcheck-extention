@@ -28,11 +28,14 @@ const createAlertIcon = (
 
 // メッセージリスナーの修正
 chrome.runtime.onMessage.addListener((message: Message) => {
-	console.log("Message received:", message);
 	// メッセージが 'CHECK_DESIGN' タイプであることを確認
 	if (message.type === "CHECK_DESIGN") {
 		// ルールが存在するかどうかを確認
 		if (message.rules) {
+			// すべてのアラートアイコンを削除
+			for (const el of document.querySelectorAll(".design-checker-alert")) {
+				el.remove();
+			}
 			// すべてのHTML要素をループしてデザインチェックを実行
 			for (const element of document.querySelectorAll("*")) {
 				if (element instanceof HTMLElement) {
