@@ -77,6 +77,11 @@ function setEventListeners() {
 function handleInputChange(event: Event) {
 	const input = event.target as HTMLInputElement;
 	const id = input.id;
+	if (input.value === "") {
+		delete currentRules[id];
+		updateRules();
+		return;
+	}
 	const value = input.value.split(",").map((val) => val.trim());
 
 	// currentRulesを更新
@@ -88,7 +93,6 @@ function handleInputChange(event: Event) {
 
 // ルールを更新する関数
 async function updateRules() {
-	console.log("Updating rules:", currentRules);
 	await chrome.storage.sync.set({
 		currentRules,
 	});

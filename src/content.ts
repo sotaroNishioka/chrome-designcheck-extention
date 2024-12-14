@@ -1,5 +1,6 @@
 import { validate } from "./utils/validator";
 import type { Message } from "./types/messages";
+import "./styles/content.css";
 
 console.log("Content script loaded!");
 
@@ -10,12 +11,6 @@ const createAlertIcon = (
 	const icon = document.createElement("div");
 	icon.className = "design-checker-alert";
 	icon.innerHTML = "⚠️";
-	// インラインスタイル適用
-	Object.assign(icon.style, {
-		position: "absolute",
-		padding: "4px",
-		cursor: "pointer",
-	});
 
 	const tooltip = document.createElement("div");
 	tooltip.className = "design-checker-tooltip";
@@ -25,33 +20,6 @@ const createAlertIcon = (
 			return;
 		}
 		tooltip.appendChild(document.createElement("p")).textContent = x;
-	});
-	// インラインスタイル適用
-	Object.assign(tooltip.style, {
-		visibility: "hidden",
-		width: "240px",
-		backgroundColor: "black",
-		color: "#fff",
-		textAlign: "center",
-		borderRadius: "6px",
-		padding: "5px 0",
-		position: "absolute",
-		zIndex: "1",
-		bottom: "125%",
-		left: "50%",
-		marginLeft: "-60px",
-		opacity: "0",
-		transition: "opacity 0.3s",
-	});
-
-	// ホバー時の処理をJavaScriptで制御
-	icon.addEventListener("mouseover", () => {
-		tooltip.style.visibility = "visible";
-		tooltip.style.opacity = "1";
-	});
-	icon.addEventListener("mouseout", () => {
-		tooltip.style.visibility = "hidden";
-		tooltip.style.opacity = "0";
 	});
 
 	icon.appendChild(tooltip);
@@ -78,11 +46,25 @@ chrome.runtime.onMessage.addListener((message: Message) => {
 						// スクロール位置を考慮した絶対位置の計算
 						const scrollTop = window.scrollY;
 						const scrollLeft = window.scrollX;
-						alertIcon.style.position = "absolute"; // positionをfixedに変更
 						alertIcon.style.left = `${rect.left + scrollLeft}px`;
 						alertIcon.style.top = `${rect.top + scrollTop}px`;
-						alertIcon.style.zIndex = "9999";
 
+						// ツールチップ位置の調整（最上部/最下部200px以内を考慮）
+						if (rect.left < window.innerWidth / 2) {
+							// 画面左側
+							if (rect.top > 200) {
+								alertIcon.classList.add("tooltip-top-right");
+							} else {
+								alertIcon.classList.add("tooltip-bottom-right");
+							}
+						} else {
+							// 画面右側
+							if (rect.top > 200) {
+								alertIcon.classList.add("tooltip-top-left");
+							} else {
+								alertIcon.classList.add("tooltip-bottom-left");
+							}
+						}
 						// body直下にアラートアイコンを追加
 						document.body.appendChild(alertIcon);
 					}
