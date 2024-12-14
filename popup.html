@@ -2,80 +2,74 @@
 <html>
 
 <head>
-  <title>Design Checker</title>
+  <title>デザインチェッカー</title>
   <link rel="stylesheet" href="src/styles/popup.css">
+  <meta charset="UTF-8">
 </head>
 
 <body>
   <div class="container">
-    <h1>Design Checker</h1>
+    <h1>デザインチェッカー</h1>
 
-    <!-- 保存したルールセット -->
-    <div class="saved-rules">
-      <h2>Saved Rule Sets</h2>
-      <select id="savedRuleSets"></select>
-      <button id="deleteRules">Delete</button>
-    </div>
-
-    <!-- アクションボタン -->
     <div class="actions">
-      <button id="saveRules">Save Current Rules</button>
-      <button id="exportRules">Export Rules</button>
-      <button id="importRules">Import Rules</button>
+      <button id="saveRules">現在のルールを保存</button>
+      <button id="exportRules">エクスポート</button>
+      <button id="importRules">インポート</button>
     </div>
 
-    <!-- チェック機能の切り替え -->
+    <div class="saved-rules">
+      <select id="savedRuleSets"></select>
+      <button id="deleteRules">選択中のルールを削除</button>
+    </div>
+
     <div class="toggle-container">
-      <button id="startCheck" class="toggle-btn on">CHECK</button>
+      <button id="startCheck" class="toggle-btn on">チェック開始</button>
     </div>
 
-    <!-- ルールの入力フォーム -->
     <div class="rules-container">
-      <!-- RULE_CONFIGS に基づいて input を直接記載 -->
-
       <div class="rule-wrapper">
-        <label for="padding">Padding (px)</label>
-        <input id="padding" class="rule-input" type="text" placeholder="Padding (comma-separated)">
+        <label for="padding">パディング (px)</label>
+        <input id="padding" class="rule-input" type="text" placeholder="パディング (カンマ区切り)">
       </div>
       <div class="rule-wrapper">
-        <label for="paddingMultiple">Padding (multiple)</label>
-        <input id="paddingMultiple" class="rule-input" type="text" placeholder="Padding (multiple)">
+        <label for="paddingMultiple">パディング (倍数)</label>
+        <input id="paddingMultiple" class="rule-input" type="text" placeholder="パディング (倍数)">
       </div>
       <div class="rule-wrapper">
-        <label for="margin">Margin (px)</label>
-        <input id="margin" class="rule-input" type="text" placeholder="Margin (comma-separated)">
+        <label for="margin">マージン (px)</label>
+        <input id="margin" class="rule-input" type="text" placeholder="マージン (カンマ区切り)">
       </div>
       <div class="rule-wrapper">
-        <label for="marginMultiple">Margin (multiple)</label>
-        <input id="marginMultiple" class="rule-input" type="text" placeholder="Margin (multiple)">
+        <label for="marginMultiple">マージン (倍数)</label>
+        <input id="marginMultiple" class="rule-input" type="text" placeholder="マージン (倍数)">
       </div>
       <div class="rule-wrapper">
-        <label for="fonts">Fonts</label>
-        <input id="fonts" class="rule-input" type="text" placeholder="Fonts (e.g., Arial, Helvetica)">
+        <label for="fonts">フォント</label>
+        <input id="fonts" class="rule-input" type="text" placeholder="フォント (例: Arial, Helvetica)">
       </div>
       <div class="rule-wrapper">
-        <label for="fontSize">Font Size (px)</label>
-        <input id="fontSize" class="rule-input" type="text" placeholder="Font Size (comma-separated)">
+        <label for="fontSize">フォントサイズ (px)</label>
+        <input id="fontSize" class="rule-input" type="text" placeholder="フォントサイズ (カンマ区切りで複数指定)">
       </div>
       <div class="rule-wrapper">
-        <label for="fontSizeMultiple">Font Size (multiple)</label>
-        <input id="fontSizeMultiple" class="rule-input" type="text" placeholder="Font Size (multiple)">
+        <label for="fontSizeMultiple">フォントサイズ (倍数)</label>
+        <input id="fontSizeMultiple" class="rule-input" type="text" placeholder="フォントサイズ (倍数)">
       </div>
       <div class="rule-wrapper">
-        <label for="fontColor">Font Color</label>
-        <input id="fontColor" class="rule-input" type="text" placeholder="Font Color (e.g., #000000)">
+        <label for="fontColor">フォントの色</label>
+        <input id="fontColor" class="rule-input" type="text" placeholder="フォントの色 (例: #000000)">
       </div>
       <div class="rule-wrapper">
-        <label for="backgroundColor">Background Color</label>
-        <input id="backgroundColor" class="rule-input" type="text" placeholder="Background Color (e.g., #FFFFFF)">
+        <label for="backgroundColor">背景色</label>
+        <input id="backgroundColor" class="rule-input" type="text" placeholder="背景色 (例: #FFFFFF)">
       </div>
       <div class="rule-wrapper">
-        <label for="borderColor">Border Color</label>
-        <input id="borderColor" class="rule-input" type="text" placeholder="Border Color (e.g., #CCCCCC)">
+        <label for="borderColor">境界線の色</label>
+        <input id="borderColor" class="rule-input" type="text" placeholder="境界線の色 (例: #CCCCCC)">
       </div>
       <div class="rule-wrapper">
-        <label for="borderWidth">Border Width (px)</label>
-        <input id="borderWidth" class="rule-input" type="text" placeholder="Border Width (comma-separated)">
+        <label for="borderWidth">境界線の幅 (px)</label>
+        <input id="borderWidth" class="rule-input" type="text" placeholder="境界線の幅 (カンマ区切り)">
       </div>
     </div>
   </div>
